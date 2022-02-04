@@ -10,6 +10,7 @@
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -86,10 +87,17 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QtWidgets.QApplication.translate("Form", "Youtube播放清單轉各影片網址轉換器", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Form", "將Youtube播放清單網址或ID放到下面", None, -1))
+        Form.setWindowTitle(
+            QtWidgets.QApplication.translate("Form", "Youtube播放清單轉各影片網址轉換器", None, -1)
+        )
+        self.label.setText(
+            QtWidgets.QApplication.translate("Form", "將Youtube播放清單網址或ID放到下面", None, -1)
+        )
         self.convert.setText(QtWidgets.QApplication.translate("Form", "轉換", None, -1))
         self.clear.setText(QtWidgets.QApplication.translate("Form", "清空", None, -1))
-        self.webopen.setText(QtWidgets.QApplication.translate("Form", "用瀏覽器開啟", None, -1))
-        self.copy.setText(QtWidgets.QApplication.translate("Form", "將網址複製到剪貼簿", None, -1))
-
+        self.webopen.setText(
+            QtWidgets.QApplication.translate("Form", "用瀏覽器開啟", None, -1)
+        )
+        self.copy.setText(
+            QtWidgets.QApplication.translate("Form", "將網址複製到剪貼簿", None, -1)
+        )

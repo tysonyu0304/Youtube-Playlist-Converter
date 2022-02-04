@@ -10,6 +10,7 @@
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -55,7 +56,13 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtWidgets.QApplication.translate("Form", "警告", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的影片，</p><p>您確定要繼續嗎</p></body></html>", None, -1))
+        self.label.setText(
+            QtWidgets.QApplication.translate(
+                "Form",
+                "<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的影片，</p><p>您確定要繼續嗎</p></body></html>",
+                None,
+                -1,
+            )
+        )
         self.open.setText(QtWidgets.QApplication.translate("Form", "確認", None, -1))
         self.cancel.setText(QtWidgets.QApplication.translate("Form", "取消", None, -1))
-
