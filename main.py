@@ -125,6 +125,9 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
         self.ui.clear.clicked.connect(self.clear)
         self.ui.webopen.clicked.connect(self.web_open)
         self.outputstr = ""
+        icon = QtGui.QIcon()
+        icon.addFile(u"icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        self.setWindowIcon(icon)
 
     def convert(self):  # 轉換 按鈕的程式
         self.playlisturl = self.ui.input.toPlainText()
@@ -215,6 +218,9 @@ class subwindow(QtWidgets.QWidget):
         self.ui2.label.setText(
             f"<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的{video_num}部影片，</p><p>您確定要繼續嗎</p></body></html>"
         )
+        icon = QtGui.QIcon()
+        icon.addFile(u"icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        self.setWindowIcon(icon)
 
     def open(self):
         import webbrowser
