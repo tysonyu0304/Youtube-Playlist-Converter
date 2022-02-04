@@ -24,21 +24,12 @@ class yt_playlist_to_URL:
     def get_html_to_json(self, path):  # 從google的youtube api 抓取撥放清單的資料
         api_url = f"{self.base_url}{path}&key={self.api_key}"
         r = requests.get(api_url)
-        if r.status_code == requests.codes.ok:
-            data = r.json()
-        else:
-            data = None
-        return data
-        # 返回播放清單影片ID的json
+        return r.json() if r.status_code == requests.codes.ok else None
 
     def get_html_to_json_snippet(self, path):
         api_url = f"{self.base_url}{path}&key={self.api_key}"
         r = requests.get(api_url)
-        if r.status_code == requests.codes.ok:
-            datas = r.json()
-        else:
-            datas = None
-        return datas
+        return r.json() if r.status_code == requests.codes.ok else None
 
     def append_video_IDs(self, path):  # 把每部影片的video ID抓出來
         video_ids = []
@@ -71,24 +62,20 @@ class yt_playlist_to_URL:
 
         totalresult = data["pageInfo"]["totalResults"]
         # 播放清單所包含的影片總數
-        if totalresult > 50:
-            times = totalresult // 50
-        else:
-            times = 0
+        times = totalresult // 50 if totalresult > 50 else 0
         # 因為youtube api每次最多只能列出50筆資料 所以要確認是否需要多次操作
         URLs = []
         if times > 0:
             url = self.append_video_IDs(path)
             for i in url:
                 URLs.append(i)
-            for n in range(times):
+            for _ in range(times):
                 nextpagetoken = data["nextPageToken"]
                 path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}&pageToken={nextpagetoken}"
                 url = self.append_video_IDs(path)
                 for k in url:
                     URLs.append(k)
                 data = self.get_html_to_json(path)
-                # 更新api網址
         else:
             URLs = self.append_video_IDs(path)
         return list(URLs)
@@ -98,23 +85,19 @@ class yt_playlist_to_URL:
         datas = self.get_html_to_json_snippet(path)
         totalresult = datas["pageInfo"]["totalResults"]
         # 播放清單所包含的影片總數
-        if totalresult > 50:
-            times = totalresult // 50
-        else:
-            times = 0
+        times = totalresult // 50 if totalresult > 50 else 0
         Name = []
         if times > 0:
             name = self.append_video_IDs_snippet(path)
             for i in name:
                 Name.append(i)
-            for n in range(times):
+            for _ in range(times):
                 nextpagetoken = datas["nextPageToken"]
                 path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}&pageToken={nextpagetoken}"
                 name = self.append_video_IDs_snippet(path)
                 for k in name:
                     Name.append(k)
                 datas = self.get_html_to_json_snippet(path)
-                # 更新api網址
         else:
             Name = self.append_video_IDs_snippet(path)
         return list(Name)
@@ -145,7 +128,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
         if self.playlisturl == '':  # 檢查所輸入之字元是否為網址 以及是否為單一影片的網址
             print("錯誤")
         else:
-            if len(str(self.playlisturl)) == 34 or len(str(self.playlisturl)) == 13:
+            if len(str(self.playlisturl)) in [34, 13]:
                 status = "OK"
                 input_type = "ID"
             elif "http" not in self.playlisturl or "list" not in self.playlisturl:
@@ -157,18 +140,16 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
                 input_type = 'URL'
             if status == 'OK':
                 self.finaloutput, self.name = main(self.playlisturl, status, input_type)
-                i = 0
                 none_video = []
-                for t in self.finaloutput:
-                    if self.name[i] == 'Deleted video' or self.name[i] == 'Private video':
+                for i, t in enumerate(self.finaloutput):
+                    if self.name[i] in ['Deleted video', 'Private video']:
                         none_video.append(i)
                     else:
                         print(self.name[i]+ '\n' + t +'\n')
-                    i = i + 1
                 num = 0
                 for o in none_video:
                     self.finaloutput.remove(self.finaloutput[o])
-                    num = num + 1
+                    num += 1
                 global video_num
                 video_num = video_num-num
                 print(f'''
