@@ -155,7 +155,6 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
             else:
                 status = 'OK'
                 input_type = 'URL'
-            print('status=',status)
             if status == 'OK':
                 self.finaloutput, self.name = main(self.playlisturl, status, input_type)
                 i = 0
