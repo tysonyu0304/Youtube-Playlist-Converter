@@ -4,12 +4,15 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 import requests
 import sys
+import os
 import pyperclip as pc
+from dotenv import load_dotenv
 
 from ui import Ui_Form
 from ui2 import Ui_Form as Ui_Form2
 
-YOUTUBE_API_KEY = "AIzaSyCdoVRTwGmjcRkai11FtT6onb8G6alUmCA"
+load_dotenv()
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 # google cloud platform 提供的youtube api v3 的api key
 
 video_num = 0
