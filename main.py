@@ -142,7 +142,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
 
     def convert(self):  # 轉換 按鈕的程式
         self.playlisturl = self.ui.input.toPlainText()
-        if self.playlisturl == "":  # 檢查所輸入之字元是否為網址 以及是否為單一影片的網址
+        if self.playlisturl == '':  # 檢查所輸入之字元是否為網址 以及是否為單一影片的網址
             print("錯誤")
         else:
             if len(str(self.playlisturl)) == 34 or len(str(self.playlisturl)) == 13:
@@ -151,39 +151,33 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
             elif "http" not in self.playlisturl or "list" not in self.playlisturl:
                 status = "NO"
                 input_type = ""
-                print("錯誤")
+                print('錯誤')
             else:
-                status = "OK"
-                input_type = "URL"
-            print("status=", status)
-            if status == "OK":
+                status = 'OK'
+                input_type = 'URL'
+            if status == 'OK':
                 self.finaloutput, self.name = main(self.playlisturl, status, input_type)
                 i = 0
                 none_video = []
                 for t in self.finaloutput:
-                    if (
-                        self.name[i] == "Deleted video"
-                        or self.name[i] == "Private video"
-                    ):
+                    if self.name[i] == 'Deleted video' or self.name[i] == 'Private video':
                         none_video.append(i)
                     else:
-                        print(self.name[i] + "\n" + t + "\n")
+                        print(self.name[i]+ '\n' + t +'\n')
                     i = i + 1
                 num = 0
                 for o in none_video:
                     self.finaloutput.remove(self.finaloutput[o])
                     num = num + 1
                 global video_num
-                video_num = video_num - num
-                print(
-                    f"""
+                video_num = video_num-num
+                print(f'''
 
 影片總數為: {video_num}
 已移除: {num} 部無法播放的影片
 ===================================
-"""
-                )
-                self.outputstr = "\n".join(self.finaloutput)
+''')
+                self.outputstr = '\n'.join(self.finaloutput)
                 global url_list
                 url_list = self.finaloutput
 
@@ -262,7 +256,7 @@ def main(playlist, status, INPUT_TYPE):
         if INPUT_TYPE == "ID":  # 檢查所輸入之字元是否為播放清單或youtube合輯的ID
             playlistid = playlist
         elif INPUT_TYPE == "URL":
-            playlistid = playlist[playlist.find("list=") + 5 :]  # 提取網址中的ID
+            playlistid = playlist[playlist.find("list=")+5:]  # 提取網址中的ID
         outputlist = start.playlist_to_URL(playlistid.strip())
         name = start.playlist_to_URL_snippet(playlistid.strip())
         global video_num
