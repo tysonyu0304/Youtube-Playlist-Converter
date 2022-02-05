@@ -1,7 +1,8 @@
 from PySide2 import QtWidgets, QtGui, QtCore
 from PySide2.QtCore import *
 from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+
+# from PySide2.QtWidgets import *
 import requests
 import sys
 import os
@@ -12,7 +13,7 @@ from ui import Ui_Form
 from ui2 import Ui_Form as Ui_Form2
 
 load_dotenv()
-YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 # google cloud platform 提供的youtube api v3 的api key
 
 video_num = 0
@@ -58,11 +59,7 @@ class yt_playlist_to_URL:
     # 結合上面的函式 將playlist ID轉成每部影片的網址
     def playlist_to_URL(self, playlistID, part="contentDetails", max_results=50):
         path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}"
-        data = self.get_html_to_json(path)
-        if not data:
-            print("錯誤")
-            return []
-        else:
+        if data := self.get_html_to_json(path):
             totalresult = data["pageInfo"]["totalResults"]
             # 播放清單所包含的影片總數
             times = totalresult // 50 if totalresult > 50 else 0
@@ -82,6 +79,9 @@ class yt_playlist_to_URL:
             else:
                 URLs = self.append_video_IDs(path)
             return list(URLs)
+        else:
+            print("錯誤")
+            return []
 
     def playlist_to_URL_snippet(self, playlistID, part="snippet", max_results=50):
         path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}"
@@ -126,12 +126,12 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
         self.ui.webopen.clicked.connect(self.web_open)
         self.outputstr = ""
         icon = QtGui.QIcon()
-        icon.addFile(u"icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile("icon.ico", QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
     def convert(self):  # 轉換 按鈕的程式
         self.playlisturl = self.ui.input.toPlainText()
-        if self.playlisturl == '':  # 檢查所輸入之字元是否為網址 以及是否為單一影片的網址
+        if self.playlisturl == "":  # 檢查所輸入之字元是否為網址 以及是否為單一影片的網址
             print("錯誤")
         else:
             if len(str(self.playlisturl)) in [34, 13]:
@@ -140,32 +140,36 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
             elif "http" not in self.playlisturl or "list" not in self.playlisturl:
                 status = "NO"
                 input_type = ""
-                print('錯誤')
+                print("錯誤")
             else:
-                status = 'OK'
-                input_type = 'URL'
-            if status == 'OK':
-                self.finaloutput, self.name, status2 = main(self.playlisturl, status, input_type)
-                if status2 == 'OK':
+                status = "OK"
+                input_type = "URL"
+            if status == "OK":
+                self.finaloutput, self.name, status2 = main(
+                    self.playlisturl, status, input_type
+                )
+                if status2 == "OK":
                     none_video = []
                     for i, t in enumerate(self.finaloutput):
-                        if self.name[i] in ['Deleted video', 'Private video']:
+                        if self.name[i] in ["Deleted video", "Private video"]:
                             none_video.append(i)
                         else:
-                            print(f'{i+1}. {self.name[i]} \n {t} \n')
+                            print(f"{i + 1}. {self.name[i]} \n {t} \n")
                     num = 0
                     for o in none_video:
                         self.finaloutput.remove(self.finaloutput[o])
                         num += 1
                     global video_num
-                    video_num = video_num-num
-                    print(f'''
+                    video_num = video_num - num
+                    print(
+                        f"""
 
 影片總數為: {video_num}
 已移除: {num} 部無法播放的影片
 ===================================
-''')
-                    self.outputstr = '\n'.join(self.finaloutput)
+"""
+                    )
+                    self.outputstr = "\n".join(self.finaloutput)
                     global url_list
                     url_list = self.finaloutput
 
@@ -174,6 +178,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
             print("請先轉換影片")
         else:
             pc.copy(self.outputstr)
+            QtWidgets.QMessageBox.information(self, "訊息", "已複製至剪貼簿")
 
     def clear(self):  # 清除 按鈕的程式
         self.ui.input.clear()
@@ -220,7 +225,7 @@ class subwindow(QtWidgets.QWidget):
             f"<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的{video_num}部影片，</p><p>您確定要繼續嗎</p></body></html>"
         )
         icon = QtGui.QIcon()
-        icon.addFile(u"icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile("icon.ico", QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
     def web_open(self):
@@ -247,15 +252,14 @@ def main(playlist, status, INPUT_TYPE):
         if INPUT_TYPE == "ID":  # 檢查所輸入之字元是否為播放清單或youtube合輯的ID
             playlistid = playlist
         elif INPUT_TYPE == "URL":
-            playlistid = playlist[playlist.find("list=")+5:]  # 提取網址中的ID
+            playlistid = playlist[playlist.find("list=") + 5 :]  # 提取網址中的ID
         outputlist = start.playlist_to_URL(playlistid.strip())
         if outputlist == []:
-            return '', '', ''
-        else:
-            name = start.playlist_to_URL_snippet(playlistid.strip())
-            global video_num
-            video_num = len(outputlist)  # 檢查影片數量
-            return outputlist, name, 'OK'
+            return "", "", ""
+        name = start.playlist_to_URL_snippet(playlistid.strip())
+        global video_num
+        video_num = len(outputlist)  # 檢查影片數量
+        return outputlist, name, "OK"
 
 
 if __name__ == "__main__":
