@@ -1,6 +1,6 @@
 from PySide2 import QtWidgets, QtGui, QtCore
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+# from PySide2.QtCore import *
+# from PySide2.QtGui import *
 
 # from PySide2.QtWidgets import *
 import requests
@@ -126,7 +126,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
         self.ui.webopen.clicked.connect(self.web_open)
         self.outputstr = ""
         icon = QtGui.QIcon()
-        icon.addFile("icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile("icon.ico", QtCore.QSize(), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
     def convert(self):  # 轉換 按鈕的程式
@@ -203,7 +203,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
 
     def keyPressEvent(self, event):  # 設定鍵盤按鍵映射
         super(mainwindow, self)
-        if event.key() == Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             self.clear()
 
 
@@ -225,7 +225,7 @@ class subwindow(QtWidgets.QWidget):
             f"<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的{video_num}部影片，</p><p>您確定要繼續嗎</p></body></html>"
         )
         icon = QtGui.QIcon()
-        icon.addFile("icon.ico", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile("icon.ico", QtCore.QSize(), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
     def web_open(self):
