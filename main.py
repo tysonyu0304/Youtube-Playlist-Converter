@@ -62,26 +62,26 @@ class yt_playlist_to_URL:
         if not data:
             print("錯誤")
             return []
-
-        totalresult = data["pageInfo"]["totalResults"]
-        # 播放清單所包含的影片總數
-        times = totalresult // 50 if totalresult > 50 else 0
-        # 因為youtube api每次最多只能列出50筆資料 所以要確認是否需要多次操作
-        URLs = []
-        if times > 0:
-            url = self.append_video_IDs(path)
-            for i in url:
-                URLs.append(i)
-            for _ in range(times):
-                nextpagetoken = data["nextPageToken"]
-                path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}&pageToken={nextpagetoken}"
-                url = self.append_video_IDs(path)
-                for k in url:
-                    URLs.append(k)
-                data = self.get_html_to_json(path)
         else:
-            URLs = self.append_video_IDs(path)
-        return list(URLs)
+            totalresult = data["pageInfo"]["totalResults"]
+            # 播放清單所包含的影片總數
+            times = totalresult // 50 if totalresult > 50 else 0
+            # 因為youtube api每次最多只能列出50筆資料 所以要確認是否需要多次操作
+            URLs = []
+            if times > 0:
+                url = self.append_video_IDs(path)
+                for i in url:
+                    URLs.append(i)
+                for _ in range(times):
+                    nextpagetoken = data["nextPageToken"]
+                    path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}&pageToken={nextpagetoken}"
+                    url = self.append_video_IDs(path)
+                    for k in url:
+                        URLs.append(k)
+                    data = self.get_html_to_json(path)
+            else:
+                URLs = self.append_video_IDs(path)
+            return list(URLs)
 
     def playlist_to_URL_snippet(self, playlistID, part="snippet", max_results=50):
         path = f"playlistItems?part={part}&playlistId={playlistID}&maxResults={max_results}"
@@ -145,28 +145,29 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
                 status = 'OK'
                 input_type = 'URL'
             if status == 'OK':
-                self.finaloutput, self.name = main(self.playlisturl, status, input_type)
-                none_video = []
-                for i, t in enumerate(self.finaloutput):
-                    if self.name[i] in ['Deleted video', 'Private video']:
-                        none_video.append(i)
-                    else:
-                        print(self.name[i]+ '\n' + t +'\n')
-                num = 0
-                for o in none_video:
-                    self.finaloutput.remove(self.finaloutput[o])
-                    num += 1
-                global video_num
-                video_num = video_num-num
-                print(f'''
+                self.finaloutput, self.name, status2 = main(self.playlisturl, status, input_type)
+                if status2 == 'OK':
+                    none_video = []
+                    for i, t in enumerate(self.finaloutput):
+                        if self.name[i] in ['Deleted video', 'Private video']:
+                            none_video.append(i)
+                        else:
+                            print(f'{i+1}. {self.name[i]} \n {t} \n')
+                    num = 0
+                    for o in none_video:
+                        self.finaloutput.remove(self.finaloutput[o])
+                        num += 1
+                    global video_num
+                    video_num = video_num-num
+                    print(f'''
 
 影片總數為: {video_num}
 已移除: {num} 部無法播放的影片
 ===================================
 ''')
-                self.outputstr = '\n'.join(self.finaloutput)
-                global url_list
-                url_list = self.finaloutput
+                    self.outputstr = '\n'.join(self.finaloutput)
+                    global url_list
+                    url_list = self.finaloutput
 
     def copy(self):  # 複製至剪貼簿 按鈕的程式
         if self.outputstr == "":
@@ -248,10 +249,13 @@ def main(playlist, status, INPUT_TYPE):
         elif INPUT_TYPE == "URL":
             playlistid = playlist[playlist.find("list=")+5:]  # 提取網址中的ID
         outputlist = start.playlist_to_URL(playlistid.strip())
-        name = start.playlist_to_URL_snippet(playlistid.strip())
-        global video_num
-        video_num = len(outputlist)  # 檢查影片數量
-        return outputlist, name
+        if outputlist == []:
+            return '', '', ''
+        else:
+            name = start.playlist_to_URL_snippet(playlistid.strip())
+            global video_num
+            video_num = len(outputlist)  # 檢查影片數量
+            return outputlist, name, 'OK'
 
 
 if __name__ == "__main__":
