@@ -182,7 +182,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
         url_list = []
 
     def web_open(self):
-        if url_list == []:
+        if not url_list:
             print("請先轉換影片")
         else:
             self.sub_window = subwindow()
@@ -213,7 +213,7 @@ class subwindow(QtWidgets.QWidget):
         super(subwindow, self).__init__(None)
         self.ui2 = Ui_Form2()
         self.ui2.setupUi(self)
-        self.ui2.open.clicked.connect(self.open)
+        self.ui2.open.clicked.connect(self.web_open)
         self.ui2.cancel.clicked.connect(self.cancel)
         self.ui2.label.setText(
             f"<html><head/><body><p>接下來將會用您的預設瀏覽器開啟所有的{video_num}部影片，</p><p>您確定要繼續嗎</p></body></html>"
@@ -222,7 +222,7 @@ class subwindow(QtWidgets.QWidget):
         icon.addFile(u"icon.ico", QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
-    def open(self):
+    def web_open(self):
         import webbrowser
 
         for t in url_list:
