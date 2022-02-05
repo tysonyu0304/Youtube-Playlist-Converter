@@ -178,7 +178,7 @@ class mainwindow(QtWidgets.QWidget):  # 建立Qt主視窗
             print("請先轉換影片")
         else:
             pc.copy(self.outputstr)
-            QtWidgets.QMessageBox.information(self, "訊息", "已複製至剪貼簿")
+            QtWidgets.QMessageBox.information(self, "訊息", "已複製至剪貼簿", QtWidgets.QMessageBox.Ok)
 
     def clear(self):  # 清除 按鈕的程式
         self.ui.input.clear()
@@ -252,9 +252,9 @@ def main(playlist, status, INPUT_TYPE):
         if INPUT_TYPE == "ID":  # 檢查所輸入之字元是否為播放清單或youtube合輯的ID
             playlistid = playlist
         elif INPUT_TYPE == "URL":
-            playlistid = playlist[playlist.find("list=") + 5 :]  # 提取網址中的ID
+            playlistid = playlist[playlist.find("list=") + 5:]  # 提取網址中的ID
         outputlist = start.playlist_to_URL(playlistid.strip())
-        if outputlist == []:
+        if not outputlist:
             return "", "", ""
         name = start.playlist_to_URL_snippet(playlistid.strip())
         global video_num
