@@ -1,11 +1,5 @@
 from PySide2 import QtWidgets, QtGui, QtCore
-# from PySide2.QtCore import *
-# from PySide2.QtGui import *
-
-# from PySide2.QtWidgets import *
-import requests
-import sys
-import os
+import requests, sys, os
 import pyperclip as pc
 from dotenv import load_dotenv
 
